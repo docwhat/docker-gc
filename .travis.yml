@@ -6,11 +6,29 @@ notifications:
   email:
     on_success: never
     on_failure: always
-
 before_install:
   - go get -u github.com/alecthomas/gometalinter
   - gometalinter --install --update
 
 script:
+  - test -z "$(go fmt)"
   - gometalinter ./...
   - go test -v ./...
+  - go test -v -race ./...
+
+before_deploy:
+  - go get github.com/mitchellh/gox
+  - gox -os="linux darwin" -arch="amd64 ppc64le" ./...
+
+deploy:
+  skip_cleanup: true
+  provider: releases
+  api_key:
+    secure: mTONRCd9AGM3cQ40pky3c2FLC/cer0mCi61EjXccjVmDeUAtMDuGEfkNG/aV0LVgWsExipJ471OshO2NkB36xU3Eh6l8frtf9GgCEkXbQIoKAC7RFh8sEsEZ78HehFDO2IY/ztwJpLG0BozQ7Bp9K+QdzcN5+Jfco10qz2rPEuFRbZpc8osfdL6EbxhrSNpOZva0SMyZlWtd0uW0VCkLPKn6Vtn7YX8dIyzQac2bC/ftL3qyGJfUQ1dHWXOIdY1y1VGyTnpqzwA4d4LG7gao5GJdpMW82XMFyNLq/ahsN3QmcdQFgrSQ3n2F8nwANhokyMQx9Jz01tfAnVgh8AlLQnuHxSvB+ahwPWr3B1RjV0V3qH2V+PPesUxd5mKfxoKVnFFmuEsAiaIWOC1QmRu6iVVpY8jdeyCfOgeTY6yY/nJY86nHp7IN0aPlO2cwuA9IlFXRytTz6Zoeks0z2/e6F60FPDwVjBuXFzhzn2SSEQbq5jDb57dvCVI/EIe6viNJsLSnIQJEWkbP3iPmXv81gA7+kyihDtnlA8XLayp3yrWaMEkV5DKPyChK0y5dEpiVVg5h+oc08f/GQin5hgiVhGOxJnw5caWd16kintBoFujJaCl/FzFkocZYaXnCjuftNZ8vtTGSycQrGp0DSwwEcSqLGNKBVuTOUwVinoU3CRc=
+  file:
+    - docker-gc_darwin_amd64
+    - docker-gc_linux_amd64
+    - docker-gc_linux_ppc64le
+  on:
+    tags: true
+    repo: docwhat/docker-gc
