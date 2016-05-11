@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	recorder "github.com/docwhat/docker-gc/recorder"
+	recorder "github.com/docwhat/docker-gc/mem_recorder"
 )
 
 func main() {

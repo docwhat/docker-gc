@@ -1,13 +1,17 @@
-package recorder
+package mem_recorder
 
 import (
 	"log"
 
 	dockerclient "github.com/fsouza/go-dockerclient"
+
+	bolt "github.com/boltdb/bolt"
 )
 
 func Start() {
 	client := newClient()
+	db, _ := bolt.Open("my.boltdb", 0600, nil)
+	defer db.Close()
 
 	listener := make(chan *dockerclient.APIEvents)
 	if err := client.AddEventListener(listener); err != nil {
