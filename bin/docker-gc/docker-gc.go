@@ -15,11 +15,10 @@ func main() {
 	fmt.Println("Press Control-C to exit...")
 	tagger := recorder.NewMemRecorder()
 	schedule(tagger)
-	fmt.Printf("%g\n", tagger)
+	fmt.Printf("%v\n", tagger)
 }
 
 func schedule(tagger imageTagRecorder) {
 	fmt.Printf("%v\n", tagger)
-	fmt.Printf("%v\n", &tagger)
 	tagger.SawImageTagAt("busybox", time.Now())
 }
