@@ -1,0 +1,16 @@
+sudo: false
+language: go
+go: 1.6
+
+notifications:
+  email:
+    on_success: never
+    on_failure: always
+
+before_install:
+  - go get -u github.com/alecthomas/gometalinter
+  - gometalinter --install --update
+
+script:
+  - gometalinter ./...
+  - go test -v ./...
