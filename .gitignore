@@ -22,6 +22,7 @@ _testmain.go
 *.exe
 *.test
 *.prof
+/docker-gc_*
 
 # My stuff
 /vendor/
