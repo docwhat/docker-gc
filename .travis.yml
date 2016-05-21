@@ -6,12 +6,13 @@ notifications:
   email:
     on_success: never
     on_failure: always
+
 before_install:
   - go get -u github.com/alecthomas/gometalinter
   - gometalinter --install --update
 
 script:
-  - test -z "$(go fmt)"
+  - test -z "$(go fmt ./...)"
   - gometalinter ./...
   - go test -v ./...
   - go test -v -race ./...
