@@ -9,17 +9,15 @@ import (
 	dockerclient "github.com/fsouza/go-dockerclient"
 )
 
-type imageTagRecorder interface {
-	SawImageTagAt(tag string, when time.Time)
-}
+var tagger *recorder.MemRecorder
 
 func main() {
 	fmt.Println("Press Control-C to exit...")
-	tagger := recorder.NewMemRecorder()
-	schedule(tagger)
+	tagger = recorder.NewMemRecorder()
+	schedule()
 }
 
-func schedule(tagger imageTagRecorder) {
+func schedule() {
 	client := newClient()
 
 	listener := make(chan *dockerclient.APIEvents)
@@ -36,9 +34,9 @@ func schedule(tagger imageTagRecorder) {
 
 		switch event.Type {
 		case "image":
-			recordImage(tagger, event)
+			recordImage(event)
 		case "container":
-			recordContainer(tagger, event)
+			recordContainer(event)
 		case "network":
 		default:
 			log.Printf("Discarding (%s %s) %v", event.Action, event.Type, event.Actor.Attributes)
@@ -46,21 +44,22 @@ func schedule(tagger imageTagRecorder) {
 	}
 }
 
-func recordImage(tagger imageTagRecorder, event *dockerclient.APIEvents) {
+func record(repoTag string, event *dockerclient.APIEvents) {
+	name := normalizeRepoTag(repoTag)
+	time := time.Unix(event.Time, event.TimeNano)
+	log.Printf("Recorded: %-9s %-8s %s", event.Type, event.Action, name)
+	tagger.SawImageTagAt(name, time)
+}
+
+func recordImage(event *dockerclient.APIEvents) {
 	if tagName, ok := event.Actor.Attributes["name"]; ok {
-		name := normalizeRepoTag(tagName)
-		time := time.Unix(event.Time, event.TimeNano)
-		log.Printf("Image:     %8s %s", event.Action, name)
-		tagger.SawImageTagAt(name, time)
+		record(tagName, event)
 	}
 }
 
-func recordContainer(tagger imageTagRecorder, event *dockerclient.APIEvents) {
+func recordContainer(event *dockerclient.APIEvents) {
 	if tagName, ok := event.Actor.Attributes["image"]; ok {
-		name := normalizeRepoTag(tagName)
-		time := time.Unix(event.Time, event.TimeNano)
-		log.Printf("Container: %8s %s", event.Action, name)
-		tagger.SawImageTagAt(name, time)
+		record(tagName, event)
 	}
 }
 
