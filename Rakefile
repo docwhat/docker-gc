@@ -9,7 +9,7 @@ end
 
 desc 'Check lint and style'
 task :lint do
-  sh 'gometalinter --disable=gotype ./...'
+  sh 'gometalinter --deadline=20s --disable=gotype ./...'
 end
 
 desc 'Run all tests'
