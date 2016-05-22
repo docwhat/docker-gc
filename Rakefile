@@ -2,9 +2,9 @@ task default: %w(lint test build)
 
 desc 'Fetches development and build dependencies'
 task :setup do
-  sh 'go get -u github.com/alecthomas/gometalinter'
+  sh 'go get -u -v github.com/alecthomas/gometalinter'
   sh 'gometalinter --install --update'
-  sh 'go get -u github.com/mitchellh/gox'
+  sh 'go get -u -v github.com/mitchellh/gox'
 end
 
 desc 'Check lint and style'
