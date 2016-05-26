@@ -13,12 +13,17 @@ import (
 var tagger *recorder.MemRecorder
 
 // FIXME: These need to switches to the command
-// var maxAgeOfImages = 7 * 24 * time.Hour
-var maxAgeOfImages = 10 * time.Second
+var maxAgeOfImages = 7 * 24 * time.Hour
 var sweeperTime = 5 * time.Second
-var verbosity = 9
+var verbosity = 1
 
 func main() {
+
+	// // debugging values
+	// maxAgeOfImages = 10 * time.Second
+	// sweeperTime = 15 * time.Minute
+	// verbosity = 9
+
 	tagger = recorder.NewMemRecorder()
 
 	go recordingSchedule()
