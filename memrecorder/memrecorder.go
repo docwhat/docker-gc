@@ -1,14 +1,19 @@
 package memrecorder
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
 // MemRecorder stores all seen image tags in memory.
 type MemRecorder struct {
 	imageTags map[string]time.Time
+	mutex     sync.Mutex
 }
 
 // An ImageTagSweeper is a method to run on each image tag.
-type ImageTagSweeper func(tag string, when time.Time)
+// Return true if you deleted the tag.
+type ImageTagSweeper func(tag string, when time.Time) bool
 
 // NewMemRecorder initializes a new MemRecorder for use.
 func NewMemRecorder() *MemRecorder {
@@ -26,13 +31,28 @@ func (r *MemRecorder) SawImageTagAt(tag string, when time.Time) {
 			return // We don't need to adjust the value.
 		}
 	}
-
+	r.mutex.Lock()
 	r.imageTags[tag] = when
+	r.mutex.Unlock()
+}
+
+// SawImageTag records a tag beeing seen now.
+func (r *MemRecorder) SawImageTag(tag string) {
+	r.SawImageTagAt(tag, time.Now())
+}
+
+// Forget that you saw a tag.
+func (r *MemRecorder) Forget(tag string) {
+	r.mutex.Lock()
+	delete(r.imageTags, tag)
+	r.mutex.Unlock()
 }
 
 // Sweep runs a function on all tag and timestamp pairs.
 func (r *MemRecorder) Sweep(sweeper ImageTagSweeper) {
 	for tag, when := range r.imageTags {
-		sweeper(tag, when)
+		if sweeper(tag, when) {
+			r.Forget(tag)
+		}
 	}
 }
