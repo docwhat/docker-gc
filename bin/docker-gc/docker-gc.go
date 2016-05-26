@@ -10,14 +10,13 @@ import (
 	dockerclient "github.com/fsouza/go-dockerclient"
 )
 
-const recordingFmt = "Recorded: %-9s %-9s %s"
-
 var tagger *recorder.MemRecorder
 
 // FIXME: These need to switches to the command
 // var maxAgeOfImages = 7 * 24 * time.Hour
 var maxAgeOfImages = 10 * time.Second
 var sweeperTime = 5 * time.Second
+var verbosity = 9
 
 func main() {
 	tagger = recorder.NewMemRecorder()
@@ -27,9 +26,32 @@ func main() {
 	go scanImages()
 	go scanContainers()
 
+	go deletionSweep()
+	go danglingDeletionSchedule()
 	fmt.Println("Press Control-C to exit...")
-	deletionSweep()
-	// FIXME: danglingDeletionSchedule()
+
+	// Sleep forever
+	select {}
+}
+
+func danglingDeletionSchedule() {
+	for {
+		time.Sleep(sweeperTime)
+		client := newClient()
+		opts := dockerclient.ListImagesOptions{Filters: make(map[string][]string)}
+		opts.Filters["dangling"] = []string{"true"}
+		if images, err := client.ListImages(opts); err != nil {
+			log.Printf("Failed to scan for dangling images: %s", err)
+		} else {
+			for _, image := range images {
+				// FIXME: Check that creation time isn't in the last sweeperTime + 1 minute
+				log.Printf("** Removing dangling image %v", image.ID)
+				if err := client.RemoveImage(image.ID); err != nil {
+					log.Printf("Failed to remove image %v: %s", image.ID, err)
+				}
+			}
+		}
+	}
 }
 
 // Scan for images to delete
@@ -38,7 +60,7 @@ func deletionSweep() {
 		client := newClient()
 		tooOld := time.Now().Add(-1 * maxAgeOfImages)
 		if lastSeen.Before(tooOld) {
-			log.Printf("** Removing image %v (%v old)", tag, time.Since(lastSeen))
+			log.Printf("** Removing old image %v (%v old)", tag, time.Since(lastSeen))
 			if images, err := client.ListImages(dockerclient.ListImagesOptions{Filter: tag}); err != nil {
 				log.Printf("Failed when asking about %v: %s", tag, err)
 			} else {
@@ -73,7 +95,7 @@ func scanImages() {
 			for _, tag := range image.RepoTags {
 				if !strings.EqualFold(tag, "<none>:<none>") {
 					tag = normalizeRepoTag(tag)
-					log.Printf(recordingFmt, "existing", "image", tag)
+					recordingLog("existing", "image", tag)
 					tagger.SawImageTag(tag)
 				}
 			}
@@ -89,9 +111,17 @@ func scanContainers() {
 	} else {
 		for _, container := range containers {
 			tag := normalizeRepoTag(container.Image)
-			log.Printf(recordingFmt, "running", "container", tag)
+			recordingLog("running", "container", tag)
 			tagger.SawImageTag(tag)
 		}
+	}
+}
+
+func recordingLog(noun string, verb string, tag string) {
+	const recordingFmt = "Recorded: %-9s %-9s %s"
+
+	if verbosity >= 2 {
+		log.Printf(recordingFmt, noun, verb, tag)
 	}
 }
 
@@ -112,12 +142,14 @@ func recordingSchedule() {
 
 		switch event.Type {
 		case "image":
-			recordImage(event)
+			record(event.Actor.ID, event)
 		case "container":
 			recordContainer(event)
-			// case "network":
-			// default:
-			//   log.Printf("Discarding (%s %s) %v", event.Action, event.Type, event.Actor.Attributes)
+		case "network":
+		default:
+			if verbosity >= 5 {
+				log.Printf("Discarding event (%s %s) %v", event.Action, event.Type, event.Actor.Attributes)
+			}
 		}
 	}
 }
@@ -137,14 +169,8 @@ func record(repoTag string, event *dockerclient.APIEvents) {
 	}
 	name := normalizeRepoTag(repoTag)
 	when := eventTime(event)
-	log.Printf(recordingFmt, event.Type, event.Action, name)
+	recordingLog(event.Type, event.Action, name)
 	tagger.SawImageTagAt(name, when)
-}
-
-func recordImage(event *dockerclient.APIEvents) {
-	if tagName, ok := event.Actor.Attributes["name"]; ok {
-		record(tagName, event)
-	}
 }
 
 func recordContainer(event *dockerclient.APIEvents) {
