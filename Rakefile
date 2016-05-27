@@ -14,8 +14,8 @@ end
 
 desc 'Run all tests'
 task :test do
-  sh 'go test -v ./...'
-  sh 'go test -v -race ./...'
+  sh 'go test ./...'
+  sh 'go test -race ./...'
 end
 
 desc 'Builds the executables'
