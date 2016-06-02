@@ -6,22 +6,21 @@ import (
 	"strings"
 	"time"
 
+	"github.com/docwhat/docker-gc/memrecorder"
+	"github.com/docwhat/docker-gc/types"
+
 	cli_config "github.com/docwhat/docker-gc/config"
-	recorder "github.com/docwhat/docker-gc/memrecorder"
 	dockerclient "github.com/fsouza/go-dockerclient"
 )
 
 var (
-	tagger *recorder.MemRecorder
-	config cli_config.Config
+	recorder types.Recorder
+	config   cli_config.Config
 )
 
-func init() {
-	config = cli_config.NewConfig()
-}
-
 func main() {
-	tagger = recorder.NewMemRecorder()
+	config = cli_config.NewConfig()
+	recorder = memrecorder.NewMemRecorder()
 
 	go recordingSchedule()
 
@@ -59,34 +58,34 @@ func danglingDeletionSchedule() {
 	}
 }
 
+func deletionSweepHandler(tag string, lastSeen time.Time) bool {
+	client := newClient()
+	tooOld := time.Now().Add(-1 * config.MaxAgeOfImages)
+	if lastSeen.Before(tooOld) {
+		log.Printf("** Removing old image %v (%v old)", tag, time.Since(lastSeen))
+		if images, err := client.ListImages(dockerclient.ListImagesOptions{Filter: tag}); err != nil {
+			log.Printf("Failed when asking about %v: %s", tag, err)
+		} else {
+			if len(images) == 0 {
+				log.Printf("   ...%v is already removed", tag)
+				return true
+			}
+		}
+		if err := client.RemoveImage(tag); err != nil {
+			log.Printf("Failed to remove image %v: %s", tag, err)
+			return false
+		}
+		return true
+	}
+	return false
+}
+
 // Scan for images to delete
 func deletionSweep() {
-	var sweeper recorder.ImageTagSweeper = func(tag string, lastSeen time.Time) bool {
-		client := newClient()
-		tooOld := time.Now().Add(-1 * config.MaxAgeOfImages)
-		if lastSeen.Before(tooOld) {
-			log.Printf("** Removing old image %v (%v old)", tag, time.Since(lastSeen))
-			if images, err := client.ListImages(dockerclient.ListImagesOptions{Filter: tag}); err != nil {
-				log.Printf("Failed when asking about %v: %s", tag, err)
-			} else {
-				if len(images) == 0 {
-					log.Printf("   ...%v is already removed", tag)
-					return true
-				}
-			}
-			if err := client.RemoveImage(tag); err != nil {
-				log.Printf("Failed to remove image %v: %s", tag, err)
-				return false
-			}
-			return true
-		}
-		return false
-	}
-
 	for {
 		time.Sleep(config.SweeperTime)
 		scanContainers()
-		tagger.Sweep(sweeper)
+		recorder.Sweep(deletionSweepHandler)
 	}
 }
 
@@ -101,7 +100,7 @@ func scanImages() {
 				if !strings.EqualFold(tag, "<none>:<none>") {
 					tag = normalizeRepoTag(tag)
 					recordingLog("existing", "image", tag)
-					tagger.SawImageTag(tag)
+					recorder.SawImageTag(tag)
 				}
 			}
 		}
@@ -117,7 +116,7 @@ func scanContainers() {
 		for _, container := range containers {
 			tag := normalizeRepoTag(container.Image)
 			recordingLog("running", "container", tag)
-			tagger.SawImageTag(tag)
+			recorder.SawImageTag(tag)
 		}
 	}
 }
@@ -175,7 +174,7 @@ func record(repoTag string, event *dockerclient.APIEvents) {
 	name := normalizeRepoTag(repoTag)
 	when := eventTime(event)
 	recordingLog(event.Type, event.Action, name)
-	tagger.SawImageTagAt(name, when)
+	recorder.SawImageTagAt(name, when)
 }
 
 func recordContainer(event *dockerclient.APIEvents) {

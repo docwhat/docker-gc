@@ -3,6 +3,8 @@ package memrecorder
 import (
 	"sync"
 	"time"
+
+	"github.com/docwhat/docker-gc/types"
 )
 
 // MemRecorder stores all seen image tags in memory.
@@ -10,10 +12,6 @@ type MemRecorder struct {
 	imageTags map[string]time.Time
 	mutex     sync.Mutex
 }
-
-// An ImageTagSweeper is a method to run on each image tag.
-// Return true if you deleted the tag.
-type ImageTagSweeper func(tag string, when time.Time) bool
 
 // NewMemRecorder initializes a new MemRecorder for use.
 func NewMemRecorder() *MemRecorder {
@@ -49,7 +47,7 @@ func (r *MemRecorder) Forget(tag string) {
 }
 
 // Sweep runs a function on all tag and timestamp pairs.
-func (r *MemRecorder) Sweep(sweeper ImageTagSweeper) {
+func (r *MemRecorder) Sweep(sweeper types.SweepHandler) {
 	for tag, when := range r.imageTags {
 		if sweeper(tag, when) {
 			r.Forget(tag)

@@ -3,7 +3,13 @@ package memrecorder
 import (
 	"testing"
 	"time"
+
+	"github.com/docwhat/docker-gc/types"
 )
+
+func TestMatchesInterface(t *testing.T) {
+	var _ types.Recorder = NewMemRecorder()
+}
 
 func TestSawImageTagAt(t *testing.T) {
 	r := NewMemRecorder()
