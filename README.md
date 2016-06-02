@@ -22,7 +22,7 @@ If you have go installed, then you can get the binary `docker-gc`
 with the following command:
 
 ``` .sh
-$ go get -u docwhat.org/docker-gc/bin/docker-gc
+$ go get -u -v github.com/docwhat/docker-gc
 ```
 
 Usage
@@ -51,7 +51,8 @@ then `docker-gc` should work.
 Developers
 ----------
 
-I use a `Rakefile` to build and test.
+I use a `Rakefile` to build and test but normal Go commands should work fine.
+The `Rakefile` is mainly for convenience, installing linters, and for Travis.
 
 Install [Ruby](https://www.ruby-lang.org/) and you can setup, test and lint the
 code.
