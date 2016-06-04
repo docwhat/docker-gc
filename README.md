@@ -6,6 +6,7 @@ Status](https://travis-ci.org/docwhat/docker-gc.svg?branch=master)](https://trav
 issues](https://img.shields.io/github/issues/docwhat/docker-gc.svg)](https://github.com/docwhat/docker-gc/issues)
 [![Go Report
 Card](https://goreportcard.com/badge/github.com/docwhat/docker-gc)](https://goreportcard.com/report/github.com/docwhat/docker-gc)
+[![GoDoc](https://godoc.org/github.com/docwhat/docker-gc?status.svg)](https://godoc.org/github.com/docwhat/docker-gc)
 
 # Docker GC
 
