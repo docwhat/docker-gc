@@ -35,6 +35,22 @@ func main() {
 	select {}
 }
 
+func hasContainerWithImage(tag string) bool {
+	client := newClient()
+	var containersFound int
+
+	opts := dockerclient.ListContainersOptions{Filters: make(map[string][]string)}
+	opts.Filters["ancestor"] = []string{tag}
+	opts.All = true
+	if containers, err := client.ListContainers(opts); err != nil {
+		log.Fatalf("Failed when asking about containers with image %v: %s", tag, err)
+	} else {
+		containersFound = len(containers)
+	}
+
+	return (containersFound != 0)
+}
+
 func danglingDeletionSchedule() {
 	for {
 		time.Sleep(config.SweeperTime)
@@ -48,6 +64,10 @@ func danglingDeletionSchedule() {
 			for _, image := range images {
 				created := time.Unix(image.Created, 0)
 				if created.Before(tooOld) {
+					if hasContainerWithImage(image.ID) {
+						log.Printf("** Skipping dangling image %v running in container", image.ID)
+						continue
+					}
 					log.Printf("** Removing dangling image %v", image.ID)
 					if err := client.RemoveImage(image.ID); err != nil {
 						log.Printf("Failed to remove image %v: %s", image.ID, err)
@@ -128,7 +148,7 @@ func scanContainers() {
 	} else {
 		for _, container := range containers {
 			tag := normalizeRepoTag(container.Image)
-			recordingLog("existing", "container", tag)
+			recordingLog("container", "image", tag)
 			recorder.SawImageTag(tag)
 		}
 	}
