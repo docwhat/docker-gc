@@ -128,7 +128,7 @@ func scanContainers() {
 	} else {
 		for _, container := range containers {
 			tag := normalizeRepoTag(container.Image)
-			recordingLog("running", "container", tag)
+			recordingLog("existing", "container", tag)
 			recorder.SawImageTag(tag)
 		}
 	}
