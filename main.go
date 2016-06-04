@@ -58,26 +58,39 @@ func danglingDeletionSchedule() {
 	}
 }
 
+func hasImage(tag string) bool {
+	client := newClient()
+	var imagesFound int
+
+	if images, err := client.ListImages(dockerclient.ListImagesOptions{Filter: tag}); err != nil {
+		log.Fatalf("Failed when asking about %v: %s", tag, err)
+	} else {
+		imagesFound = len(images)
+	}
+
+	return (imagesFound != 0)
+}
+
 func deletionSweepHandler(tag string, lastSeen time.Time) bool {
 	client := newClient()
 	tooOld := time.Now().Add(-1 * config.MaxAgeOfImages)
-	if lastSeen.Before(tooOld) {
-		log.Printf("** Removing old image %v (%v old)", tag, time.Since(lastSeen))
-		if images, err := client.ListImages(dockerclient.ListImagesOptions{Filter: tag}); err != nil {
-			log.Printf("Failed when asking about %v: %s", tag, err)
-		} else {
-			if len(images) == 0 {
-				log.Printf("   ...%v is already removed", tag)
-				return true
-			}
-		}
+
+	if !lastSeen.Before(tooOld) {
+		return false // don't delete from recorder
+	}
+
+	if hasImage(tag) {
 		if err := client.RemoveImage(tag); err != nil {
 			log.Printf("Failed to remove image %v: %s", tag, err)
-			return false
+			return false // don't delete from recorder
 		}
-		return true
+
+		log.Printf("** Removing old image %v (%v old)", tag, time.Since(lastSeen))
+		return true // delete from recorder
 	}
-	return false
+
+	log.Printf("** Someone already removed image: %v (%v old)", tag, time.Since(lastSeen))
+	return true // delete from recorder
 }
 
 // Scan for images to delete
