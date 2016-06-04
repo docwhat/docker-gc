@@ -1,3 +1,5 @@
+require 'tmpdir'
+
 PACKAGES = FileList['**/*.go']
   .exclude(/_test\.go\Z/)
   .map { |p| './' + File.dirname(p) }
@@ -31,15 +33,25 @@ desc 'Run tests with coverage'
 task :coverage do
   rm_f 'coverage.txt'
   coverage = ['mode: atomic']
-  PACKAGES.each do |path|
-    sh(*%W(go test -coverprofile=profile.out -covermode=atomic #{path}))
-    if File.exist? 'profile.out'
-      coverage << File.readlines('profile.out')[2..-1]
-      rm_f 'profile.out'
-    end
+  PACKAGES.each do |pkg|
+    coverage += cover_one_package(pkg)
   end
-  open('coverage.txt', 'w') do |f|
-    coverage.flatten.each { |l| f.puts l }
+
+  open('coverage.txt', 'w') { |f| coverage.each { |l| f.puts l } }
+end
+
+def cover_one_package(pkg)
+  Dir.mktmpdir do |tdir|
+    tcov = File.join(tdir, 'profile.out')
+
+    sh(*%W(go test -coverprofile=#{tcov} -covermode=atomic #{pkg}))
+
+    return [] unless File.exist? tcov
+
+    new_lines = File.readlines(tcov)[2..-1]
+    return [] if new_lines.nil?
+
+    new_lines.compact.reject { |l| l =~ /\A\s*\Z/ }
   end
 end
 
