@@ -34,7 +34,7 @@ func (r *MemRecorder) SawImageTagAt(tag string, when time.Time) {
 	r.mutex.Unlock()
 }
 
-// SawImageTag records a tag beeing seen now.
+// SawImageTag records a tag being seen now.
 func (r *MemRecorder) SawImageTag(tag string) {
 	r.SawImageTagAt(tag, time.Now())
 }
