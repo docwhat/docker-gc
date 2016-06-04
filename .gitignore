@@ -23,7 +23,9 @@ _testmain.go
 *.test
 *.prof
 /docker-gc_*
+/docker-gc
 
 # My stuff
 /vendor/
 /build/
+/coverage.txt

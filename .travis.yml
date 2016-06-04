@@ -11,7 +11,12 @@ before_install:
   - rake setup
 
 script:
-  - rake default
+  - rake build
+  - rake coverage
+  - rake lint
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 before_deploy:
   - rake xbuild
