@@ -34,7 +34,7 @@ Usage
 -----
 
 ~~~
-usage: docker-gc [<flags>]
+usage: docker-gc_darwin_amd64 [<flags>]
 
 The missing docker garbage collector.
 
@@ -46,8 +46,10 @@ Flags:
                             DOCKER_GC_MAX_IMAGE_AGE)
   -s, --sweeper-time=15m    How much time between running checks to delete
                             images. (Env: DOCKER_GC_SWEEPER_TIME)
-  -v, --verbosity=1         How much logging to stderr. 0 = none. 9 = maximal
-                            (Env: DOCKER_GC_VERBOSITY)
+  -d, --dangle-safe-duration=30m
+                            How old should a dangle image be before deletion.
+                            (Env: DOCKER_GC_DANGLE_SAFE_DURATION)
+  -q, --quiet               Don't show any output. (Env: DOCKER_GC_QUIET)
 ~~~
 
 It uses the normal Docker environment variables, so if `docker info` works,

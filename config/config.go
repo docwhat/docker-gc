@@ -14,7 +14,7 @@ type Config struct {
 	MaxAgeOfImages     time.Duration
 	SweeperTime        time.Duration
 	DangleSafeDuration time.Duration
-	Verbosity          uint8
+	Quiet              bool
 	Version            string
 }
 
@@ -30,7 +30,7 @@ func NewConfig() Config {
 	kingpin.Flag("max-image-age", "How old to allow images to be before deletion. (Env: DOCKER_GC_MAX_IMAGE_AGE)").Short('m').Default("168h").OverrideDefaultFromEnvar("DOCKER_GC_MAX_IMAGE_AGE").DurationVar(&config.MaxAgeOfImages)
 	kingpin.Flag("sweeper-time", "How much time between running checks to delete images. (Env: DOCKER_GC_SWEEPER_TIME)").Short('s').Default("15m").OverrideDefaultFromEnvar("DOCKER_GC_SWEEPER_TIME").DurationVar(&config.SweeperTime)
 	kingpin.Flag("dangle-safe-duration", "How old should a dangle image be before deletion. (Env: DOCKER_GC_DANGLE_SAFE_DURATION)").Short('d').Default("30m").OverrideDefaultFromEnvar("DOCKER_GC_DANGLE_SAFE_DURATION").DurationVar(&config.DangleSafeDuration)
-	kingpin.Flag("verbosity", "How much logging to stderr. 0 = none. 9 = maximal (Env: DOCKER_GC_VERBOSITY)").Short('v').Default("1").OverrideDefaultFromEnvar("DOCKER_GC_VERBOSITY").Uint8Var(&config.Verbosity)
+	kingpin.Flag("quiet", "Don't show any output. (Env: DOCKER_GC_QUIET)").Short('q').Default("false").OverrideDefaultFromEnvar("DOCKER_GC_QUIET").BoolVar(&config.Quiet)
 
 	kingpin.Parse()
 
@@ -38,7 +38,7 @@ func NewConfig() Config {
 		kingpin.Fatalf("You must set the sweeper-time to greater or equal than 4s")
 	}
 
-	if config.Verbosity == 0 {
+	if config.Quiet {
 		log.SetOutput(ioutil.Discard)
 	}
 	return config
