@@ -70,3 +70,12 @@ desc 'Cleans up executables'
 task :clobber do
   rm FileList['docker-gc_*']
 end
+
+file 'docker-gc_linux_amd64' => Dir['**/*.go'] do
+  sh 'gox -osarch=linux/amd64 ./...'
+end
+
+desc 'Builds a docker container'
+task docker: %w(docker-gc_linux_amd64 Dockerfile) do
+  sh 'docker build --pull --tag=docker-gc:latest .'
+end
