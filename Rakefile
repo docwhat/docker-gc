@@ -62,7 +62,8 @@ end
 
 desc 'Cross builds the executables'
 task :xbuild do
-  sh 'gox -os="linux darwin" -arch="amd64 ppc64le" ./...'
+  sh 'CGO_ENABLED=0 gox -os="linux darwin" -arch="amd64 ppc64le" ./...'
+  sh 'file docker-gc_*' # to check they are all static
 end
 
 desc 'Cleans up executables'
