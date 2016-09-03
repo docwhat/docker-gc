@@ -11,7 +11,8 @@ go get -u -v \
   github.com/mitchellh/gox \
   golang.org/x/tools/cmd/cover \
   github.com/kardianos/govendor \
-  github.com/wadey/gocovmerge
+  github.com/wadey/gocovmerge \
+  github.com/pengwynn/flint
 
 header "Installing gometalinter tools"
 gometalinter --install
