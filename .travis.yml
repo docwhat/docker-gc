@@ -8,18 +8,19 @@ notifications:
     on_failure: always
 
 before_install:
-  - rake setup
+  - ./script/bootstrap
 
 script:
-  - rake build
-  - rake coverage
-  - rake lint
+  - ./script/build
+  - ./script/test
+  - ./script/coverage
+  - ./script/lint
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
 before_deploy:
-  - rake xbuild
+  - ./script/build all
   - sha256sum docker-gc_* > checksums.sha256
 
 deploy:

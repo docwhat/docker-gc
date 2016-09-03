@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+# Generates a coverage report.
+
+set -euo pipefail
+source "$(dirname "$0")/utilities.bash"
+
+# Work-around for golang/go/#6909
+
+# create list of project packages, excluding vendored (with govendor).
+all_packages=( $(govendor list -no-status +local) )
+
+# List of packages with tests.
+packages=( $(go list -f '{{if or (len .TestGoFiles) (len .XTestGoFiles)}}{{.ImportPath}}{{end}}' "${all_packages[@]}") )
+
+# make list of testable packages comma-separated.
+comma_separated_packages="$(join_by , "${packages[@]}")"
+
+# go list template script
+# template="{{if or (len .TestGoFiles) (len .XTestGoFiles)}}govendor test -covermode atomic -coverprofile {{.Name}}_{{len .Imports}}_{{len .Deps}}.coverprofile -coverpkg $comma_separated_packages {{.ImportPath}}{{end}}"
+
+# run with full coverage (including other packages) with govendor
+rm -f .*.coverprofile
+for package in "${packages[@]}"; do
+  outfile=".$(basename "$package").coverprofile"
+  header "Building coverage for $package"
+  govendor test \
+    -cover \
+    -covermode=atomic \
+    -coverpkg="$comma_separated_packages" \
+    -coverprofile="$outfile" \
+    "$package"
+done
+
+header "Merging all coverage"
+gocovmerge .*.coverprofile > coverage.txt
+rm -f .*.coverprofile
+
+# vim: set ft=sh :

@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+# Builds one (or more executable).
+#
+# Usage:
+#   Just your native executable:
+#      ./script/build
+#   All cross compile platforms:
+#      ./script/build all
+
+set -euo pipefail
+source "$(dirname "$0")/utilities.bash"
+progname="docker-gc"
+
+export CGO_ENABLED=0 # Force static compiling
+
+if [[ "${1:-native}" == *all* ]]; then
+  header "Building all binaries"
+  osarches=(
+    darwin/amd64
+    linux/amd64
+    linux/ppc64le
+  )
+
+  gox \
+    -osarch="${osarches[*]}" \
+    -output="${progname}_{{.OS}}_{{.Arch}}"
+else
+  header "Building native binary"
+  go build -o "$progname" ./*.go
+fi
+
+# vim: set ft=sh :

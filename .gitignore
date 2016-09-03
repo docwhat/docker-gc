@@ -26,6 +26,6 @@ _testmain.go
 /docker-gc
 
 # My stuff
-/vendor/
 /build/
+.*.coverprofile
 /coverage.txt
