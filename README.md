@@ -1,4 +1,4 @@
-[![GitHub release](https://img.shields.io/github/release/docwhat/docker-gc.svg)](https://github.com/docwhat/docker-gc/releases) [![Build Status](https://travis-ci.org/docwhat/docker-gc.svg?branch=master)](https://travis-ci.org/docwhat/docker-gc) [![Code Coverage](https://codecov.io/gh/docwhat/docker-gc/branch/master/graph/badge.svg)](https://codecov.io/gh/docwhat/docker-gc) [![GitHub issues](https://img.shields.io/github/issues/docwhat/docker-gc.svg)](https://github.com/docwhat/docker-gc/issues) [![Go Report Card](https://goreportcard.com/badge/github.com/docwhat/docker-gc)](https://goreportcard.com/report/github.com/docwhat/docker-gc) [![GoDoc](https://godoc.org/github.com/docwhat/docker-gc?status.svg)](https://godoc.org/github.com/docwhat/docker-gc)
+[![GitHub release](https://img.shields.io/github/release/docwhat/docker-gc.svg)](https://github.com/docwhat/docker-gc/releases) [![Build Status](https://travis-ci.org/docwhat/docker-gc.svg?branch=master)](https://travis-ci.org/docwhat/docker-gc) [![Code Coverage](https://codecov.io/gh/docwhat/docker-gc/branch/master/graph/badge.svg)](https://codecov.io/gh/docwhat/docker-gc) [![GitHub issues](https://img.shields.io/github/issues/docwhat/docker-gc.svg)](https://github.com/docwhat/docker-gc/issues) [![Go Report Card](https://goreportcard.com/badge/github.com/docwhat/docker-gc)](https://goreportcard.com/report/github.com/docwhat/docker-gc) [![GoDoc](https://godoc.org/github.com/docwhat/docker-gc?status.svg)](https://godoc.org/github.com/docwhat/docker-gc) [![](http://badge-imagelayers.iron.io/docwhat/docker-gc:latest.svg)](http://imagelayers.iron.io/?images=docwhat/webtest:latest "Get your own badge on imagelayers.iron.io")
 
 Docker GC
 =========
@@ -11,6 +11,16 @@ Installation
 ### Binaries
 
 I have pre-built binaries for several platform already. They are available on the [releases page](https://github.com/docwhat/docker-gc/releases).
+
+### Container
+
+I also have pre-built containers available on [Docker Hub](https://hub.docker.com/r/docwhat/docker-gc/).
+
+You can use this via `docker run`:
+
+``` .sh
+$ docker run -d -v /var/run/docker:/var/run/docker --name=gc docwhat/docker-gc:latest
+```
 
 ### Source
 
