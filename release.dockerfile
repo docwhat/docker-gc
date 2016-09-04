@@ -1,7 +1,7 @@
 FROM busybox
 MAINTAINER Christian Höltje <docwhat@gerf.org>
 
-ENV DOCKER_GC_VERSION 1.0.3
+ENV DOCKER_GC_VERSION 1.0.4
 ENV COLUMNS           80
 
 ADD ["https://github.com/docwhat/docker-gc/releases/download/${DOCKER_GC_VERSION}/docker-gc_linux_amd64", "/docker-gc"]
