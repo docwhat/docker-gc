@@ -2,7 +2,6 @@ package docker
 
 import (
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -19,19 +18,23 @@ type SawImageHandler func(tag string, when time.Time)
 // docker-gc.
 type Docker struct {
 	client *clientLib.Client
+	logger Logger
+}
+
+type Logger interface {
+	Fatal(string, ...interface{})
 }
 
 // NewDocker initializes and returns a new Docker instance.
-func NewDocker() *Docker {
+func NewDocker(logger Logger) *Docker {
 	client, err := clientLib.NewClientFromEnv()
 
 	if err != nil {
-		log.Fatalf("Unable to create docker client: %s", err)
+		logger.Fatal("Unable to create docker client: %s", err)
 	}
 
 	if err := client.Ping(); err != nil {
-		log.Printf("Cannot connect to the Docker daemon. Is the docker daemon running on this host?")
-		log.Fatalf("%s", err)
+		logger.Fatal("Cannot connect to the Docker daemon. Is the docker daemon running on this host?\n\t%s", err)
 	}
 
 	return &Docker{client: client}
@@ -64,7 +67,6 @@ func eventToTime(event *clientLib.APIEvents) time.Time {
 // Returns true if it succeeds.
 func (d *Docker) RemoveImage(tag string) bool {
 	if err := d.client.RemoveImage(tag); err != nil {
-		log.Printf("Failed to remove image %v: %s", tag, err)
 		return false
 	}
 	return true
@@ -75,7 +77,7 @@ func (d *Docker) HasImage(tag string) bool {
 	var imagesFound int
 
 	if images, err := d.client.ListImages(clientLib.ListImagesOptions{Filter: tag}); err != nil {
-		log.Fatalf("Failed when asking about %v: %s", tag, err)
+		d.logger.Fatal("Failed when asking about %v: %s", tag, err)
 	} else {
 		imagesFound = len(images)
 	}
@@ -91,7 +93,7 @@ func (d *Docker) HasContainerWithImage(tag string) bool {
 	opts.Filters["ancestor"] = []string{tag}
 	opts.All = true
 	if containers, err := d.client.ListContainers(opts); err != nil {
-		log.Fatalf("Failed when asking about containers with image %v: %s", tag, err)
+		d.logger.Fatal("Failed when asking about containers with image %v: %s", tag, err)
 	} else {
 		containersFound = len(containers)
 	}
@@ -104,7 +106,7 @@ func (d *Docker) ScanDanglingImages(safetyDuration time.Duration, f ImageNameSca
 	opts := clientLib.ListImagesOptions{Filters: make(map[string][]string)}
 	opts.Filters["dangling"] = []string{"true"}
 	if images, err := d.client.ListImages(opts); err != nil {
-		log.Fatalf("Failed to scan for dangling images: %s", err)
+		d.logger.Fatal("Failed to scan for dangling images: %s", err)
 	} else {
 		safeTime := time.Now().Add(safetyDuration)
 		for _, image := range images {
@@ -123,7 +125,7 @@ func (d *Docker) ScanDanglingImages(safetyDuration time.Duration, f ImageNameSca
 func (d *Docker) ScanAllImageNames(f ImageNameScanner) {
 	opts := clientLib.ListImagesOptions{All: true}
 	if images, err := d.client.ListImages(opts); err != nil {
-		log.Fatalf("Unable to list images: %s", err)
+		d.logger.Fatal("Unable to list images: %s", err)
 	} else {
 		for _, image := range images {
 			for _, tag := range image.RepoTags {
@@ -145,7 +147,7 @@ func (d *Docker) ScanAllImageNames(f ImageNameScanner) {
 func (d *Docker) ScanAllContainerImageNames(f ImageNameScanner) {
 	opts := clientLib.ListContainersOptions{All: true}
 	if containers, err := d.client.ListContainers(opts); err != nil {
-		log.Fatalf("Unable to list containers: %s", err)
+		d.logger.Fatal("Unable to list containers: %s", err)
 	} else {
 		for _, container := range containers {
 			tag := NormalizeImageName(container.Image)
@@ -158,14 +160,14 @@ func (d *Docker) ScanAllContainerImageNames(f ImageNameScanner) {
 func (d *Docker) HandleImageNameEvents(f SawImageHandler) {
 	listener := make(chan *clientLib.APIEvents)
 	if err := d.client.AddEventListener(listener); err != nil {
-		log.Fatalf("Unable to listen for events: %s", err)
+		d.logger.Fatal("Unable to listen for events: %s", err)
 	}
 
 	for {
 		event := <-listener
 
 		if event == nil {
-			log.Fatalf("Lost connection to docker host")
+			d.logger.Fatal("Lost connection to docker host")
 		}
 
 		switch event.Type {

@@ -1,8 +1,6 @@
 package config
 
 import (
-	"io/ioutil"
-	"log"
 	"os"
 	"time"
 
@@ -38,8 +36,5 @@ func NewConfig() Config {
 		kingpin.Fatalf("You must set the sweeper-time to greater or equal than 4s")
 	}
 
-	if config.Quiet {
-		log.SetOutput(ioutil.Discard)
-	}
 	return config
 }

@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"time"
 
 	"github.com/docwhat/docker-gc/config"
@@ -15,14 +13,17 @@ type app struct {
 	config   config.Config
 	docker   *docker.Docker
 	recorder types.Recorder
+	logger   Logger
 }
 
 func main() {
-	main := app{config: config.NewConfig(), docker: docker.NewDocker()}
+	config := config.NewConfig()
+	logger := NewLogger(config)
+	main := app{config: config, docker: docker.NewDocker(logger), logger: logger}
 
 	main.recorder = memrecorder.NewMemRecorder()
 
-	fmt.Println("Press Control-C to exit...")
+	logger.Info("Press Control-C to exit...")
 
 	main.scanContainerImageNames()
 	main.scanImageNames()
@@ -37,7 +38,7 @@ func main() {
 
 func (m app) deleteDangling() {
 	m.docker.ScanDanglingImages(m.config.DangleSafeDuration, func(tag string) {
-		log.Printf("Removing dangling image %s", tag)
+		m.logger.Info("Removing dangling image %s", tag)
 		m.docker.RemoveImage(tag)
 	})
 }
@@ -51,14 +52,14 @@ func (m app) deleteDanglingLoop() {
 
 func (m app) scanImageNames() {
 	m.docker.ScanAllImageNames(func(tag string) {
-		log.Printf("Saw image %s", tag)
+		m.logger.Info("Saw image %s", tag)
 		m.recorder.SawImageTag(tag)
 	})
 }
 
 func (m app) scanContainerImageNames() {
 	m.docker.ScanAllContainerImageNames(func(tag string) {
-		log.Printf("Saw image %s in container", tag)
+		m.logger.Info("Saw image %s in container", tag)
 		m.recorder.SawImageTag(tag)
 	})
 }
@@ -71,16 +72,16 @@ func (m app) deleteOldImagesHandler(tag string, lastSeen time.Time) bool {
 	}
 
 	if age < m.config.MaxAgeOfImages {
-		log.Printf("Not deleting %s because it is only %s old", tag, age)
+		m.logger.Info("Not deleting %s because it is only %s old", tag, age)
 		return false // don't delete from recorder
 	}
 
 	if m.docker.HasImage(tag) {
-		log.Printf("Removing image %s because it is %s old", tag, age)
+		m.logger.Info("Removing image %s because it is %s old", tag, age)
 		return m.docker.RemoveImage(tag)
 	}
 
-	log.Printf("** Someone already removed image: %v (%v old)", tag, time.Since(lastSeen))
+	m.logger.Info("** Someone already removed image: %v (%v old)", tag, time.Since(lastSeen))
 	return true // delete from recorder
 }
 
@@ -95,7 +96,7 @@ func (m app) deleteOldImagesLoop() {
 
 func (m app) listenForEvents() {
 	m.docker.HandleImageNameEvents(func(tag string, when time.Time) {
-		log.Printf("Event: %s at %s", tag, when)
+		m.logger.Info("Event: %s at %s", tag, when)
 		m.recorder.SawImageTagAt(tag, when)
 	})
 }
