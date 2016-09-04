@@ -5,7 +5,9 @@
 set -euo pipefail
 source "$(dirname "$0")/utilities.bash"
 
+./script/build docker
+
 header "Building Container"
-docker build --pull --tag=docker-gc:latest
+docker build --pull --tag=docker-gc:latest .
 
 # vim: set ft=sh :

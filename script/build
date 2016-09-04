@@ -12,19 +12,29 @@ set -euo pipefail
 source "$(dirname "$0")/utilities.bash"
 progname="docker-gc"
 
+osarch="${1:-native}"
 export CGO_ENABLED=0 # Force static compiling
 
-if [[ "${1:-native}" == *all* ]]; then
-  header "Building all binaries"
+function dogox()
+{
+  osarches="$*"
+  gox \
+    -osarch="$*" \
+    -output="${progname}_{{.OS}}_{{.Arch}}"
+}
+
+if [[ "$osarch" == *all* ]]; then
   osarches=(
     darwin/amd64
     linux/amd64
     linux/ppc64le
   )
 
-  gox \
-    -osarch="${osarches[*]}" \
-    -output="${progname}_{{.OS}}_{{.Arch}}"
+  header "Building all binaries"
+  dogox "${osarches[*]}"
+elif [[ "$osarch" == docker ]]; then
+  header "Building docker binary"
+  dogox "linux/amd64"
 else
   header "Building native binary"
   go build -o "$progname" ./*.go
