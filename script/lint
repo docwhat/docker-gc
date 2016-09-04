@@ -6,7 +6,7 @@ set -euo pipefail
 source "$(dirname "$0")/utilities.bash"
 
 header "Linter"
-gometalinter --deadline=1m --vendored-linters --vendor
+gometalinter --deadline=1m --vendored-linters --vendor --disable=gotype
 
 header "Flint"
 flint --skip-changelog --skip-code-of-conduct
