@@ -16,8 +16,13 @@ script:
   - ./script/coverage
   - ./script/lint
 
+env:
+  global:
+    secure: "hbctOOj//8JEgTidYIn+mZ2uzYimGeFwmduUfnGcPpNk1fq7oUlfmXWItX+UU+Rfp2JbmC5LR3tStJLHRCXwabW2jiSsDntx7+iCU8L712tmP7aErRAhInlNsimyW2l/Vm5WfPPMfdO+/FXtBhYoMdtbPxKJuQlqEu3c/Hqvz9UTSwAaA7NPUCYQv951+E6Y0BYWhCJ8B5QvrRxyJGtU5Kt7c0maJ/nLDQYop2P5XGSUd22TFBIzx3VBrVszsev1i8nx3E9GJDqCK+j1uQQ12wyXAQvZOBKMuSBnUncHMBNgwOWYKL1KmegnOQh9FCDSEHK3PUVclVCv3yRQTA/9/QEP/LEhYVaPGFX1ABUT6eK0N79CAi7+ZsVPReFyqpjrOsInOri8dIHrTNepE2zlwE2OVK8AfemZseathQKEFFc7BV/qTVtn/v73a5k5eDP/0Lm+jqvc2Cw5/Yo56T6z/HArXfl3CwARWjPO1hx0jaaBALBB1AAJgDgkfLVb0Tnh8IVhkdLBGcQ7b1eY6unXoipD5XZhCi227UPDb20gE2vvix+Qsb+fF3z5AWyOXwxlzaUixfp0xwHD0oLBryZX7WWB/LDvv2hShWLBXX7Lp+JxjOrClTQSKdxp8IBN5+2gzYNKoLuqc344DjfsjJreUdBrXLT5P8wZSkby1p3sNzk="
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+  - 'curl -k -H "Content-Type: application/json" --data ''{"source_type": "Tag", "source_name": "''"$TRAVIS_TAG"''"}'' -X POST "$DOCKER_HUB_TRIGGER_URL"'
 
 before_deploy:
   - ./script/build all
