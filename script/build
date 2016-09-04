@@ -18,6 +18,7 @@ export CGO_ENABLED=0 # Force static compiling
 function dogox()
 {
   gox \
+    -ldflags "-s -w" \
     -osarch="$*" \
     -output="${progname}_{{.OS}}_{{.Arch}}"
 }
@@ -36,7 +37,10 @@ elif [[ "$osarch" == docker ]]; then
   dogox "linux/amd64"
 else
   header "Building native binary"
-  go build -o "$progname" ./*.go
+  go build \
+    -ldflags "-s -w" \
+    -o "$progname" \
+    ./*.go
 fi
 
 # vim: set ft=sh :
