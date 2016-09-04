@@ -17,7 +17,6 @@ export CGO_ENABLED=0 # Force static compiling
 
 function dogox()
 {
-  osarches="$*"
   gox \
     -osarch="$*" \
     -output="${progname}_{{.OS}}_{{.Arch}}"
