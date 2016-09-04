@@ -58,12 +58,4 @@ then `docker-gc` should work.
 Developers
 ----------
 
-I use a `Rakefile` to build and test but normal Go commands should work fine.
-The `Rakefile` is mainly for convenience, installing linters, and for Travis.
-
-Install [Ruby](https://www.ruby-lang.org/) and you can setup, test and lint the
-code.
-
-~~~
-$ rake setup test lint
-~~~
+I love contributions! Read [CONTRIBUTING.md](CONTRIBUTING.md) for details.
