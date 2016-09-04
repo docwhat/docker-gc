@@ -22,11 +22,14 @@ env:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-  - 'curl -k -H "Content-Type: application/json" --data ''{"source_type": "Tag", "source_name": "''"$TRAVIS_TAG"''"}'' -X POST "$DOCKER_HUB_TRIGGER_URL"'
 
 before_deploy:
   - ./script/build all
   - sha256sum docker-gc_* > checksums.sha256
+
+after_deploy:
+  - sleep 2
+  - 'curl -k -H "Content-Type: application/json" --data ''{"source_type": "Tag", "source_name": "''"$TRAVIS_TAG"''"}'' -X POST "$DOCKER_HUB_TRIGGER_URL"'
 
 deploy:
   skip_cleanup: true
