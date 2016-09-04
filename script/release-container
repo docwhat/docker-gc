@@ -1,0 +1,40 @@
+#!/bin/bash
+#
+# Releases a container to Docker Hub from Travis
+#
+# It expects the following environment variables:
+#   DOCKER_USER -- Docker Hub username
+#   DOCKER_PASSWORD -- Docker Hub password
+#   ...and the usual TRAVIS variables.
+
+set -euo pipefail
+source "$(dirname "$0")/utilities.bash"
+
+if [ -z "${TRAVIS_BRANCH:-}" -a "${TRAVIS:-}" = true ]; then
+  echo "This is for use in Travis ONLY" 1>&2
+  exit 1
+fi
+
+if [ "${TRAVIS_BRANCH:-}" != "master" ]; then
+  echo "Skipping building the container on non-master branch"
+  exit 0
+fi
+
+if [ "${TRAVIS_REPO_SLUG:-}" != "docwhat/docker-gc" ]; then
+  echo "Skipping building the container from unexpected repository"
+  exit 0
+fi
+
+if [ -z "${TRAVIS_TAG:-}" ]; then
+  echo "Skipping building the container when not tagged"
+  exit 0
+fi
+
+docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
+docker build --pull --tag="${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT}" .
+
+docker tag "${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT}" "${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT}"
+docker tag "${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT}" "${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT/.*}"
+docker push "${TRAVIS_REPO_SLUG}"
+
+# vim: set ft=sh :

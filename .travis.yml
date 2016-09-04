@@ -18,6 +18,12 @@ script:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+  - ./script/release-container
+
+env:
+  global:
+    - DOCKER_USER=docwhat
+    - secure: "Wzjc7yjXkauFRBtbByafa5Th/Ivn6quuXVHLAsSarZ9+utcenwsvwX9GHQUsl2Us/0q7LQrJRE5PGXYZJSpiQXdrjSF/5fGJNuotwp2PeYuP2WOrRbhhzG83yoQqD0yKgMv+sgKXXeT87WYRgLd4W0O3jEv5pLgr+4vopJR4rIrjxq4GUzSp8xJSuuny+g5K8SVsvvQrd1s1LOlLWIdr+A2eEGiVstAcEKy9viztEmwppcwNaS6ig3O0mvTvhnWPHgZzZ7EgLVrNDg6gxzB/F+i+NFnYFiFztURCxaDz5+UQQnTx7WTcs4jcmFyqyKA84lSzZ6yF0H41BmW59K4ydRuvQ9QEvwOAW9ilPB00xGFQx8GdMMPERu3SENQ9yFitSm1GbziO8yuYYaVrBPVQwdJM0YDieLm6QAxH50nZI45stO4STJo9XTcOo2NQC0KuzPYSUfQ56f2horN8J3OcpLhCXuqee5Gj796l0d6w8UJG4uc/EV4LZ8DME8NqMy4JFqkIXvZ/Svz4tYZi3MNtHBJIEtOm7OAFeuCY0WuW0mOzq4YeIqHujrk4a0wt2fVFeJFIg0h2Yhdws1kPeFIGzApJgkM49EC+BewWeeCTTUfsB80CcIA/MUR2tx1QibAL0YbcVxuoQ0AMkcUNze2r1paH+0hqvbt7dyu+xXVi4iw=" # DOCKER_PASSWORD
 
 before_deploy:
   - ./script/build all
