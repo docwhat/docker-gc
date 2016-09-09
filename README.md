@@ -1,10 +1,12 @@
 [![GitHub release](https://img.shields.io/github/release/docwhat/docker-gc.svg)](https://github.com/docwhat/docker-gc/releases)
 [![Docker Image Layers](https://images.microbadger.com/badges/image/docwhat/docker-gc.svg)](https://microbadger.com/images/docwhat/docker-gc)
+
 [![Build Status](https://travis-ci.org/docwhat/docker-gc.svg?branch=master)](https://travis-ci.org/docwhat/docker-gc)
 [![GoDoc](https://godoc.org/github.com/docwhat/docker-gc?status.svg)](https://godoc.org/github.com/docwhat/docker-gc)
 [![Go Report Card](https://goreportcard.com/badge/github.com/docwhat/docker-gc)](https://goreportcard.com/report/github.com/docwhat/docker-gc)
-[![Code Coverage](https://codecov.io/gh/docwhat/docker-gc/branch/master/graph/badge.svg)](https://codecov.io/gh/docwhat/docker-gc)
 [![GitHub issues](https://img.shields.io/github/issues/docwhat/docker-gc.svg)](https://github.com/docwhat/docker-gc/issues)
+
+[![Code Coverage](https://codecov.io/gh/docwhat/docker-gc/branch/master/graph/badge.svg)](https://codecov.io/gh/docwhat/docker-gc)
 
 Docker GC
 =========
