@@ -4,9 +4,8 @@
 
 [![Build Status](https://travis-ci.org/docwhat/docker-gc.svg?branch=master)](https://travis-ci.org/docwhat/docker-gc)
 [![Go Report Card](https://goreportcard.com/badge/github.com/docwhat/docker-gc)](https://goreportcard.com/report/github.com/docwhat/docker-gc)
-[![GitHub issues](https://img.shields.io/github/issues/docwhat/docker-gc.svg)](https://github.com/docwhat/docker-gc/issues)
-
 [![Code Coverage](https://codecov.io/gh/docwhat/docker-gc/branch/master/graph/badge.svg)](https://codecov.io/gh/docwhat/docker-gc)
+[![GitHub issues](https://img.shields.io/github/issues/docwhat/docker-gc.svg)](https://github.com/docwhat/docker-gc/issues)
 
 Docker GC
 =========
