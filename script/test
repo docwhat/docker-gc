@@ -6,9 +6,6 @@ set -euo pipefail
 source "$(dirname "$0")/utilities.bash"
 
 header "Tests"
-govendor test -v +local
-
-header "Tests (race detection)"
-govendor test -v -race +local
+govendor test -race -v +local
 
 # vim: set ft=sh :

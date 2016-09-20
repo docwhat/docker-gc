@@ -1,4 +1,4 @@
-package config
+package main
 
 import (
 	"os"
@@ -8,7 +8,7 @@ import (
 )
 
 // Config stores the configuration from cli flags and environment variables.
-type Config struct {
+type appConfig struct {
 	MaxAgeOfImages     time.Duration
 	SweeperTime        time.Duration
 	DangleSafeDuration time.Duration
@@ -17,8 +17,8 @@ type Config struct {
 }
 
 // NewConfig initializes a Config object from the cli flags and environment variables.
-func NewConfig() Config {
-	config := Config{Version: version}
+func newAppConfig() appConfig {
+	config := appConfig{Version: version}
 	kingpin.CommandLine.Writer(os.Stdout)
 	kingpin.HelpFlag.Short('h')
 	kingpin.CommandLine.Help = "The missing docker garbage collector."

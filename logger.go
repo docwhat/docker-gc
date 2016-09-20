@@ -3,17 +3,15 @@ package main
 import (
 	"fmt"
 	"os"
-
-	"github.com/docwhat/docker-gc/config"
 )
 
 // Logger is a logger that understands the application's configuration.
 type Logger struct {
-	config config.Config
+	config appConfig
 }
 
 // NewLogger initializes and returns a new Logger instance.
-func NewLogger(config config.Config) Logger {
+func NewLogger(config appConfig) Logger {
 	return Logger{config: config}
 }
 

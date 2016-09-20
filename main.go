@@ -3,21 +3,20 @@ package main
 import (
 	"time"
 
-	"github.com/docwhat/docker-gc/config"
-	"github.com/docwhat/docker-gc/docker"
-	"github.com/docwhat/docker-gc/memrecorder"
-	"github.com/docwhat/docker-gc/types"
+	"docwhat.org/docker-gc/docker"
+	"docwhat.org/docker-gc/memrecorder"
+	"docwhat.org/docker-gc/types"
 )
 
 type app struct {
-	config   config.Config
+	config   appConfig
 	docker   *docker.Docker
 	recorder types.Recorder
 	logger   Logger
 }
 
 func main() {
-	config := config.NewConfig()
+	config := newAppConfig()
 	logger := NewLogger(config)
 	main := app{config: config, docker: docker.NewDocker(logger), logger: logger}
 

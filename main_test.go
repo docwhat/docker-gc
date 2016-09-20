@@ -2,5 +2,5 @@ package main
 
 import "testing"
 
-func TestSomething(t *testing.T) {
+func TestMain(t *testing.T) {
 }

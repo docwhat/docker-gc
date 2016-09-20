@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docwhat/docker-gc/types"
+	"docwhat.org/docker-gc/types"
 )
 
 func TestMatchesInterface(t *testing.T) {

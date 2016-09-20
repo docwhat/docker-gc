@@ -8,9 +8,10 @@ notifications:
     on_failure: always
 
 before_install:
-  - ./script/bootstrap
+  - ./script/bootstrap -u
 
 script:
+  - go generate
   - ./script/build
   - ./script/test
   - ./script/coverage

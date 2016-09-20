@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/docwhat/docker-gc/types"
+	"docwhat.org/docker-gc/types"
 )
 
 // MemRecorder stores all seen image tags in memory.
