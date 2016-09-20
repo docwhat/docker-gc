@@ -16,15 +16,13 @@ packages=( $(go list -f '{{if or (len .TestGoFiles) (len .XTestGoFiles)}}{{.Impo
 # make list of testable packages comma-separated.
 comma_separated_packages="$(join_by , "${packages[@]}")"
 
-# go list template script
-# template="{{if or (len .TestGoFiles) (len .XTestGoFiles)}}govendor test -covermode atomic -coverprofile {{.Name}}_{{len .Imports}}_{{len .Deps}}.coverprofile -coverpkg $comma_separated_packages {{.ImportPath}}{{end}}"
-
 # run with full coverage (including other packages) with govendor
 rm -f .*.coverprofile
 for package in "${packages[@]}"; do
   outfile=".$(basename "$package").coverprofile"
   header "Building coverage for $package"
   govendor test \
+    -race \
     -cover \
     -covermode=atomic \
     -coverpkg="$comma_separated_packages" \
