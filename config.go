@@ -55,7 +55,13 @@ func newAppConfig(args []string) appConfig {
 		OverrideDefaultFromEnvar("DOCKER_GC_QUIET").
 		BoolVar(&config.Quiet)
 
-	app.Parse(args)
+	if command, err := app.Parse(args); err != nil {
+		app.Usage(nil)
+	} else {
+		if command != "" {
+			app.Usage(nil)
+		}
+	}
 
 	if config.SweeperTime < (4 * time.Second) {
 		app.Fatalf("You must set the sweeper-time to greater or equal than 4s")

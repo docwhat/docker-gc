@@ -5,18 +5,20 @@ import (
 	"time"
 )
 
-func TestMaxAgeOfImagesFlag(t *testing.T) {
-	var testTable = []struct {
-		in  []string
-		out time.Duration
-	}{
-		{[]string{}, 168 * time.Hour},
-		{[]string{"--max-image-age=20m"}, 20 * time.Minute},
-		{[]string{"--max-image-age", "7h"}, 7 * time.Hour},
-		{[]string{"-m", "5h"}, 5 * time.Hour},
-	}
+type durationTestTableRow struct {
+	in  []string
+	out time.Duration
+}
 
-	for _, tt := range testTable {
+var maxAgeOfImagesTestTable = []durationTestTableRow{
+	{[]string{}, 168 * time.Hour},
+	{[]string{"--max-image-age=20m"}, 20 * time.Minute},
+	{[]string{"--max-image-age", "7h"}, 7 * time.Hour},
+	{[]string{"-m", "5h"}, 5 * time.Hour},
+}
+
+func TestMaxAgeOfImagesFlag(t *testing.T) {
+	for _, tt := range maxAgeOfImagesTestTable {
 		config := newAppConfig(tt.in)
 		got := config.MaxAgeOfImages
 		if got != tt.out {
@@ -25,18 +27,15 @@ func TestMaxAgeOfImagesFlag(t *testing.T) {
 	}
 }
 
-func TestSweeperTimeFlag(t *testing.T) {
-	var testTable = []struct {
-		in  []string
-		out time.Duration
-	}{
-		{[]string{}, 15 * time.Minute},
-		{[]string{"--sweeper-time=11m"}, 11 * time.Minute},
-		{[]string{"--sweeper-time", "2h"}, 2 * time.Hour},
-		{[]string{"-s", "30s"}, 30 * time.Second},
-	}
+var sweeperTimeTestTable = []durationTestTableRow{
+	{[]string{}, 15 * time.Minute},
+	{[]string{"--sweeper-time=11m"}, 11 * time.Minute},
+	{[]string{"--sweeper-time", "2h"}, 2 * time.Hour},
+	{[]string{"-s", "30s"}, 30 * time.Second},
+}
 
-	for _, tt := range testTable {
+func TestSweeperTimeFlag(t *testing.T) {
+	for _, tt := range sweeperTimeTestTable {
 		config := newAppConfig(tt.in)
 		got := config.SweeperTime
 		if got != tt.out {
@@ -45,18 +44,15 @@ func TestSweeperTimeFlag(t *testing.T) {
 	}
 }
 
-func TestDangleSafeDurationFlag(t *testing.T) {
-	var testTable = []struct {
-		in  []string
-		out time.Duration
-	}{
-		{[]string{}, 30 * time.Minute},
-		{[]string{"--dangle-safe-duration=11m"}, 11 * time.Minute},
-		{[]string{"--dangle-safe-duration", "2h"}, 2 * time.Hour},
-		{[]string{"-d", "30s"}, 30 * time.Second},
-	}
+var dangleSafeDurationTestTable = []durationTestTableRow{
+	{[]string{}, 30 * time.Minute},
+	{[]string{"--dangle-safe-duration=11m"}, 11 * time.Minute},
+	{[]string{"--dangle-safe-duration", "2h"}, 2 * time.Hour},
+	{[]string{"-d", "30s"}, 30 * time.Second},
+}
 
-	for _, tt := range testTable {
+func TestDangleSafeDurationFlag(t *testing.T) {
+	for _, tt := range dangleSafeDurationTestTable {
 		config := newAppConfig(tt.in)
 		got := config.DangleSafeDuration
 		if got != tt.out {
