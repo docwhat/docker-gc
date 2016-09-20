@@ -3,8 +3,6 @@ package main
 import (
 	"sync"
 	"time"
-
-	"docwhat.org/docker-gc/types"
 )
 
 // MemRecorder stores all seen image tags in memory.
@@ -47,7 +45,7 @@ func (r *MemRecorder) Forget(tag string) {
 }
 
 // Sweep runs a function on all tag and timestamp pairs.
-func (r *MemRecorder) Sweep(sweeper types.SweepHandler) {
+func (r *MemRecorder) Sweep(sweeper SweepHandler) {
 	for tag, when := range r.imageTags {
 		if sweeper(tag, when) {
 			r.Forget(tag)

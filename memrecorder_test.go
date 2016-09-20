@@ -3,12 +3,10 @@ package main
 import (
 	"testing"
 	"time"
-
-	"docwhat.org/docker-gc/types"
 )
 
 func TestMatchesInterface(t *testing.T) {
-	var _ types.Recorder = NewMemRecorder()
+	var _ Recorder = NewMemRecorder()
 }
 
 func TestSawImageTagAt(t *testing.T) {

@@ -2,14 +2,12 @@ package main
 
 import (
 	"time"
-
-	"docwhat.org/docker-gc/types"
 )
 
 type app struct {
 	config   appConfig
 	docker   *Docker
-	recorder types.Recorder
+	recorder Recorder
 	logger   Logger
 }
 
