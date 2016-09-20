@@ -1,4 +1,4 @@
-package docker
+package main
 
 import (
 	"fmt"
@@ -19,10 +19,6 @@ type SawImageHandler func(tag string, when time.Time)
 type Docker struct {
 	client *clientLib.Client
 	logger Logger
-}
-
-type Logger interface {
-	Fatal(string, ...interface{})
 }
 
 // NewDocker initializes and returns a new Docker instance.
