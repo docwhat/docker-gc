@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"time"
 )
 
@@ -12,7 +13,7 @@ type app struct {
 }
 
 func main() {
-	config := newAppConfig()
+	config := newAppConfig(os.Args[1:])
 	logger := NewLogger(config)
 	main := app{config: config, docker: NewDocker(logger), logger: logger}
 
