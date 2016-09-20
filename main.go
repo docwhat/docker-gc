@@ -3,7 +3,6 @@ package main
 import (
 	"time"
 
-	"docwhat.org/docker-gc/memrecorder"
 	"docwhat.org/docker-gc/types"
 )
 
@@ -19,7 +18,7 @@ func main() {
 	logger := NewLogger(config)
 	main := app{config: config, docker: NewDocker(logger), logger: logger}
 
-	main.recorder = memrecorder.NewMemRecorder()
+	main.recorder = NewMemRecorder()
 
 	logger.Info("Press Control-C to exit...")
 

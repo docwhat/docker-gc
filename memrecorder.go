@@ -1,4 +1,4 @@
-package memrecorder
+package main
 
 import (
 	"sync"
