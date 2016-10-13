@@ -29,3 +29,6 @@ _testmain.go
 /build/
 .*.coverprofile
 /coverage.txt
+
+# Shouldn't be committed
+/version.go

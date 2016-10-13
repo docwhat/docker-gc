@@ -7,12 +7,14 @@ source "$(dirname "$0")/utilities.bash"
 
 version=$(git describe --tags --long)
 
-header "Updating version.go => ${version}"
+header "Generating version.go"
 cat << EOF > version.go
 package main
+// This file is generated via "go generate"
 
-//go:generate bash ./script/version
 var version = "${version}"
 EOF
+
+echo " * ${version}"
 
 # vim: set ft=sh :

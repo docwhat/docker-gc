@@ -1,4 +1,5 @@
 package main
 
-//go:generate bash ./script/version
-var version = "undefined"
+// This file is generated via "go generate"
+
+var version = "unknown"

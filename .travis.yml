@@ -11,7 +11,7 @@ before_install:
   - ./script/bootstrap -u
 
 script:
-  - go generate
+  - ./script/version
   - ./script/build
   - ./script/test
   - ./script/coverage
