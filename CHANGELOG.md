@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Changed
 
 -   Updated docker support.
+-   Logger now logs docker actions correctly.
 
 [1.0.5] - 2016-05-26
 --------------------

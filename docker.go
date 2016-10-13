@@ -35,7 +35,7 @@ func NewDocker(logger Logger) *Docker {
 		logger.Fatal("Cannot connect to the Docker daemon. Is the docker daemon running on this host?\n\t%s", err)
 	}
 
-	return &Docker{client: client}
+	return &Docker{client: client, logger: logger}
 }
 
 // NormalizeImageName returns a normalized image name. The closest thing to a canonical name.
