@@ -170,10 +170,10 @@ func (d *Docker) HandleImageNameEvents(f SawImageHandler) {
 
 		switch event.Type {
 		case "image":
-			f(NormalizeImageName(event.Actor.ID), eventToTime(event))
+			go f(NormalizeImageName(event.Actor.ID), eventToTime(event))
 		case "container":
 			if tag, ok := event.Actor.Attributes["image"]; ok {
-				f(NormalizeImageName(tag), eventToTime(event))
+				go f(NormalizeImageName(tag), eventToTime(event))
 			}
 		}
 	}
