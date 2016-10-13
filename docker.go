@@ -156,7 +156,7 @@ func (d *Docker) ScanAllContainerImageNames(f ImageNameScanner) {
 
 // HandleImageNameEvents runs a function on incoming events that include an image name.
 func (d *Docker) HandleImageNameEvents(f SawImageHandler) {
-	listener := make(chan *clientLib.APIEvents)
+	listener := make(chan *clientLib.APIEvents, 40)
 	if err := d.client.AddEventListener(listener); err != nil {
 		d.logger.Fatal("Unable to listen for events: %s", err)
 	}
