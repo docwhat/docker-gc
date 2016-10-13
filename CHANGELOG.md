@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [Unreleased]
 ------------
 
+[1.0.6] - 2016-10-13
+--------------------
+
 ### Changed
 
 -   Updated docker support.
@@ -15,14 +18,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 -   Fixed regression: Events are now listened for again.
 -   Ensure events won't slow down dockerd.
 
-[1.0.5] - 2016-05-26
+[1.0.5] - 2016-09-04
 --------------------
 
 ### Changed
 
 -   Binaries are smaller now. About 8MiB to 5MiB.
 
-[1.0.4] - 2016-05-26
+[1.0.4] - 2016-09-04
 --------------------
 
 ### Added
@@ -36,7 +39,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 -   `--quiet` doesn't hide errors anymore.
 -   Removed timestamps from logging output.
 
-[1.0.3] - 2016-05-26
+[1.0.3] - 2016-07-04
 --------------------
 
 ### Changed
@@ -55,7 +58,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 -   Replaced `--verbosity=NUM` flag with simpler `--quiet`
 
-[1.0.1] - 2016-05-26
+[1.0.1] - 2016-05-27
 ----------------------
 
 ### Changed
@@ -70,7 +73,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 -   Everything!
 
 
-[Unreleased]: https://github.com/docwhat/docker-gc/compare/1.0.5...HEAD
+[Unreleased]: https://github.com/docwhat/docker-gc/compare/1.0.6...HEAD
+[1.0.6]: https://github.com/docwhat/docker-gc/compare/1.0.5...1.0.6
 [1.0.5]: https://github.com/docwhat/docker-gc/compare/1.0.4...1.0.5
 [1.0.4]: https://github.com/docwhat/docker-gc/compare/1.0.3...1.0.4
 [1.0.3]: https://github.com/docwhat/docker-gc/compare/1.0.2...1.0.3
