@@ -27,6 +27,7 @@ func main() {
 	// go recordingSchedule()
 	go main.deleteDanglingLoop()
 	go main.deleteOldImagesLoop()
+	go main.listenForEvents()
 
 	// Sleep forever
 	select {}
