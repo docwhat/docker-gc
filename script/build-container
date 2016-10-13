@@ -1,11 +1,16 @@
 #!/bin/bash
 #
-# Sets up all the dependencies, etc. so you can build and test.
+# Creates a minimal container from source.
 
 set -euo pipefail
 source "$(dirname "$0")/utilities.bash"
 
-header "Building Container gc:devel"
-docker build --pull --tag=gc:devel .
+version=$(git describe --tags --long)
+version=${1:-$version}
+
+./script/build docker
+
+header "Building Container gc:${version}"
+docker build --pull --tag="gc:${version}" --file=scratch.dockerfile .
 
 # vim: set ft=sh :
