@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# Runs the program.
+
+set -euo pipefail
+source "$(dirname "$0")/utilities.bash"
+progname="docker-gc"
+
+typeset -a gofiles=()
+for file in *.go; do
+  if [[ "$file" != *_test.go ]]; then
+    gofiles+=( "$file" )
+  fi
+done
+
+go run "${gofiles[@]}" "$@"
+
+# vim: set ft=sh :
