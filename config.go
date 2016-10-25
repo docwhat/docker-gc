@@ -3,6 +3,7 @@ package main
 //go:generate ./script/version
 
 import (
+	"fmt"
 	"os"
 	"time"
 
@@ -19,7 +20,7 @@ type appConfig struct {
 }
 
 // NewConfig initializes a Config object from the cli flags and environment variables.
-func newAppConfig(args []string) appConfig {
+func newAppConfig(args []string) (appConfig, error) {
 	config := appConfig{Version: version}
 
 	app := kingpin.New("docker-gc", "The missing docker garbage collector.")
@@ -57,17 +58,20 @@ func newAppConfig(args []string) appConfig {
 		OverrideDefaultFromEnvar("DOCKER_GC_QUIET").
 		BoolVar(&config.Quiet)
 
-	if command, err := app.Parse(args); err != nil {
+	command, err := app.Parse(args)
+	if err != nil {
 		app.Usage(nil)
-	} else {
-		if command != "" {
-			app.Usage(nil)
-		}
+		return appConfig{}, err
+	}
+
+	if command != "" {
+		app.Usage(nil)
+		return appConfig{}, fmt.Errorf("No arguments expected")
 	}
 
 	if config.SweeperTime < (4 * time.Second) {
 		app.Fatalf("You must set the sweeper-time to greater or equal than 4s")
 	}
 
-	return config
+	return config, nil
 }

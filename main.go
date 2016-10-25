@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"time"
 )
@@ -13,7 +14,11 @@ type app struct {
 }
 
 func main() {
-	config := newAppConfig(os.Args[1:])
+	config, err := newAppConfig(os.Args[1:])
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		os.Exit(2)
+	}
 	logger := NewLogger(config)
 	main := app{config: config, docker: NewDocker(logger), logger: logger}
 

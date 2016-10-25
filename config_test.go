@@ -5,58 +5,54 @@ import (
 	"time"
 )
 
-type durationTestTableRow struct {
-	in  []string
-	out time.Duration
+type configFlagTestTableRow struct {
+	attrName string
+	in       []string
+	isGood   func(appConfig) bool
 }
 
-var maxAgeOfImagesTestTable = []durationTestTableRow{
-	{[]string{}, 168 * time.Hour},
-	{[]string{"--max-image-age=20m"}, 20 * time.Minute},
-	{[]string{"--max-image-age", "7h"}, 7 * time.Hour},
-	{[]string{"-m", "5h"}, 5 * time.Hour},
+var configFlagTestTable = []configFlagTestTableRow{
+	// MaxAgeOfImages
+	{"MaxAgeOfImages", []string{}, func(c appConfig) bool { return c.MaxAgeOfImages == 168*time.Hour }},
+	{"MaxAgeOfImages", []string{"--max-image-age=20m"}, func(c appConfig) bool { return c.MaxAgeOfImages == 20*time.Minute }},
+	{"MaxAgeOfImages", []string{"--max-image-age", "7h"}, func(c appConfig) bool { return c.MaxAgeOfImages == 7*time.Hour }},
+	{"MaxAgeOfImages", []string{"-m", "5h"}, func(c appConfig) bool { return c.MaxAgeOfImages == 5*time.Hour }},
+
+	// SweeperTime
+	{"SweeperTime", []string{}, func(c appConfig) bool { return c.SweeperTime == 15*time.Minute }},
+	{"SweeperTime", []string{"--sweeper-time=11m"}, func(c appConfig) bool { return c.SweeperTime == 11*time.Minute }},
+	{"SweeperTime", []string{"--sweeper-time", "2h"}, func(c appConfig) bool { return c.SweeperTime == 2*time.Hour }},
+	{"SweeperTime", []string{"-s", "30s"}, func(c appConfig) bool { return c.SweeperTime == 30*time.Second }},
+
+	// DangleSafeDuration
+	{"DangleSafeDuration", []string{}, func(c appConfig) bool { return c.DangleSafeDuration == 30*time.Minute }},
+	{"DangleSafeDuration", []string{"--dangle-safe-duration=11m"}, func(c appConfig) bool { return c.DangleSafeDuration == 11*time.Minute }},
+	{"DangleSafeDuration", []string{"--dangle-safe-duration", "2h"}, func(c appConfig) bool { return c.DangleSafeDuration == 2*time.Hour }},
+	{"DangleSafeDuration", []string{"-d", "30s"}, func(c appConfig) bool { return c.DangleSafeDuration == 30*time.Second }},
+
+	// Quiet
+	{"Quiet", []string{}, func(c appConfig) bool { return !c.Quiet }},
+	{"Quiet", []string{"-q"}, func(c appConfig) bool { return c.Quiet }},
+	{"Quiet", []string{"--quiet"}, func(c appConfig) bool { return c.Quiet }},
 }
 
-func TestMaxAgeOfImagesFlag(t *testing.T) {
-	for _, tt := range maxAgeOfImagesTestTable {
-		config := newAppConfig(tt.in)
-		got := config.MaxAgeOfImages
-		if got != tt.out {
-			t.Errorf("args %q config.MaxAgeOfImages => %q, want %q", tt.in, got, tt.out)
+func TestConfigFlagTestTable(t *testing.T) {
+	for _, tt := range configFlagTestTable {
+		config, err := newAppConfig(tt.in)
+		if err != nil {
+			t.Errorf("args %q; got error %q", tt.in, err)
+		}
+		if !tt.isGood(config) {
+			t.Errorf("args %v config => %+v", tt.in, config)
 		}
 	}
 }
 
-var sweeperTimeTestTable = []durationTestTableRow{
-	{[]string{}, 15 * time.Minute},
-	{[]string{"--sweeper-time=11m"}, 11 * time.Minute},
-	{[]string{"--sweeper-time", "2h"}, 2 * time.Hour},
-	{[]string{"-s", "30s"}, 30 * time.Second},
-}
-
-func TestSweeperTimeFlag(t *testing.T) {
-	for _, tt := range sweeperTimeTestTable {
-		config := newAppConfig(tt.in)
-		got := config.SweeperTime
-		if got != tt.out {
-			t.Errorf("args %q config.SweeperTime => %q, want %q", tt.in, got, tt.out)
-		}
-	}
-}
-
-var dangleSafeDurationTestTable = []durationTestTableRow{
-	{[]string{}, 30 * time.Minute},
-	{[]string{"--dangle-safe-duration=11m"}, 11 * time.Minute},
-	{[]string{"--dangle-safe-duration", "2h"}, 2 * time.Hour},
-	{[]string{"-d", "30s"}, 30 * time.Second},
-}
-
-func TestDangleSafeDurationFlag(t *testing.T) {
-	for _, tt := range dangleSafeDurationTestTable {
-		config := newAppConfig(tt.in)
-		got := config.DangleSafeDuration
-		if got != tt.out {
-			t.Errorf("args %q config.DangleSafeDuration => %q, want %q", tt.in, got, tt.out)
-		}
+// See issue #4
+func TestBogusFlag(t *testing.T) {
+	args := []string{"--bogus-flag"}
+	_, err := newAppConfig(args)
+	if err == nil {
+		t.Errorf("args %q; expected error, but got nothing", args)
 	}
 }
