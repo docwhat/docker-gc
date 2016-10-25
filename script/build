@@ -23,6 +23,8 @@ function dogox()
     -output="${progname}_{{.OS}}_{{.Arch}}"
 }
 
+go generate
+
 if [[ "$osarch" == *all* ]]; then
   osarches=(
     darwin/amd64

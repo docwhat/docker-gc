@@ -1,5 +1,7 @@
 package main
 
+//go:generate ./script/version
+
 import (
 	"os"
 	"time"
