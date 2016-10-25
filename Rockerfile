@@ -3,11 +3,11 @@
 FROM golang:1.7
 
 # Bootstrap requirements
-MOUNT ./script/:/script/
+COPY ./script/ /script/
 RUN /script/bootstrap
 
 # Get source in place
-MOUNT .:/go/src/docwhat.org/docker-gc/
+COPY ./ /go/src/docwhat.org/docker-gc/
 WORKDIR /go/src/docwhat.org/docker-gc
 
 # Test
@@ -16,11 +16,11 @@ RUN ./script/test
 # Lint
 RUN ./script/lint
 
-# Lint
-RUN ./script/coverage
-
 # Build binary
 RUN ./script/build docker
+
+MOUNT ./:/src/
+RUN cp docker-gc_linux_amd64 /src/
 
 ##### Run image #####
 FROM scratch
