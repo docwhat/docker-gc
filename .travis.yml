@@ -7,9 +7,8 @@ notifications:
     on_success: never
     on_failure: always
 
-before_install:
+install:
   - ./script/bootstrap -u
-  - ./script/version
 
 script:
   - ./script/build
