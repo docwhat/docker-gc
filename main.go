@@ -26,8 +26,7 @@ func main() {
 
 	logger.Info("Press Control-C to exit...")
 
-	main.scanContainerImageNames()
-	main.scanImageNames()
+	main.scanAllImageNames()
 
 	// go recordingSchedule()
 	go main.deleteDanglingLoop()
@@ -52,7 +51,7 @@ func (m app) deleteDanglingLoop() {
 	}
 }
 
-func (m app) scanImageNames() {
+func (m app) scanAllImageNames() {
 	m.docker.ScanAllImageNames(func(tag string) {
 		m.logger.Info("Saw image %s", tag)
 		m.recorder.SawImageTag(tag)
