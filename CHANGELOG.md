@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [Unreleased]
 ------------
 
+[1.0.7] - 2017-01-16
+--------------------
+
+-   Fixed crash due to concurrent read and write.
+-   CLI wouldn't exit when given bad flags.
+
 [1.0.6] - 2016-10-13
 --------------------
 
@@ -73,7 +79,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 -   Everything!
 
 
-[Unreleased]: https://github.com/docwhat/docker-gc/compare/1.0.6...HEAD
+[Unreleased]: https://github.com/docwhat/docker-gc/compare/1.0.7...HEAD
+[1.0.7]: https://github.com/docwhat/docker-gc/compare/1.0.6...1.0.7
 [1.0.6]: https://github.com/docwhat/docker-gc/compare/1.0.5...1.0.6
 [1.0.5]: https://github.com/docwhat/docker-gc/compare/1.0.4...1.0.5
 [1.0.4]: https://github.com/docwhat/docker-gc/compare/1.0.3...1.0.4
