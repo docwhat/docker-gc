@@ -8,8 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 [Unreleased]
 ------------
 
+### Added
+
+### Changed
+
+### Removed
+
+
 [1.0.7] - 2017-01-16
 --------------------
+
+### Changed
 
 -   Fixed crash due to concurrent read and write.
 -   CLI wouldn't exit when given bad flags.
