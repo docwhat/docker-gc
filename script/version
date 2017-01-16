@@ -6,7 +6,7 @@ set -euo pipefail
 # shellcheck source=script/utilities.bash
 source "$(dirname "$0")/utilities.bash"
 
-version=$(git describe --tags --long)
+version=$(git describe --tags)
 
 cat << EOF > version.go
 package main
