@@ -22,14 +22,15 @@ func NewMemRecorder() *MemRecorder {
 //
 // Duplicate or older times will be ignored.
 func (r *MemRecorder) SawImageTagAt(tag string, when time.Time) {
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
+
 	if old, ok := r.imageTags[tag]; ok {
 		if when.Before(old) {
 			return // We don't need to adjust the value.
 		}
 	}
-	r.mutex.Lock()
 	r.imageTags[tag] = when
-	r.mutex.Unlock()
 }
 
 // SawImageTag records a tag being seen now.
@@ -46,7 +47,14 @@ func (r *MemRecorder) Forget(tag string) {
 
 // Sweep runs a function on all tag and timestamp pairs.
 func (r *MemRecorder) Sweep(sweeper SweepHandler) {
+	copiedImageTags := make(map[string]time.Time)
+	r.mutex.Lock()
 	for tag, when := range r.imageTags {
+		copiedImageTags[tag] = when
+	}
+	r.mutex.Unlock()
+
+	for tag, when := range copiedImageTags {
 		if sweeper(tag, when) {
 			r.Forget(tag)
 		}
