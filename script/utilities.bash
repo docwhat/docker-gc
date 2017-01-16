@@ -2,8 +2,8 @@
 #
 # Utility functions for pretty output
 
-cd "$(dirname "$0")"
-cd ..
+set -euo pipefail
+cd "$(dirname "$(dirname "$0")")"
 
 sent_header=f
 colors=$(( $(tput colors 2> /dev/null || :) + 0 ))

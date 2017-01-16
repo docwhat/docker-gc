@@ -3,8 +3,8 @@
 # Runs the program.
 
 set -euo pipefail
+# shellcheck source=script/utilities.bash
 source "$(dirname "$0")/utilities.bash"
-progname="docker-gc"
 
 typeset -a gofiles=()
 for file in *.go; do
