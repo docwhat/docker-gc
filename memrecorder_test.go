@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
@@ -95,4 +96,32 @@ func TestSweep(t *testing.T) {
 		t.Error("I shouldn't find any tags")
 		return false
 	})
+}
+
+func TestSawAndSweep(t *testing.T) {
+	r := NewMemRecorder()
+	const iterations = 1000
+
+	// Writer 1
+	go func() {
+		for i := 0; i < iterations/2; i++ {
+			r.SawImageTag(fmt.Sprintf("foo%d", i))
+		}
+	}()
+
+	// Writer 2
+	go func() {
+		for i := 0; i < iterations/2; i++ {
+			r.SawImageTag(fmt.Sprintf("bar%d", i))
+		}
+	}()
+
+	// Reader/Deleter
+	go func() {
+		for i := 0; i < iterations; i++ {
+			r.Sweep(func(_ string, _ time.Time) bool {
+				return i%2 == 0
+			})
+		}
+	}()
 }
