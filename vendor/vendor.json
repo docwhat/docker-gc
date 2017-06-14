@@ -117,10 +117,10 @@
 			"revisionTime": "2016-10-11T22:47:47Z"
 		},
 		{
-			"checksumSHA1": "HAf78MYzd8cwHAMEpL+xb3stirE=",
+			"checksumSHA1": "UmXGieuTJQOzJPspPJTVKKKMiUA=",
 			"path": "github.com/docker/go-units",
-			"revision": "f2145db703495b2e525c59662db69a7344b00bb8",
-			"revisionTime": "2016-09-08T21:06:52Z"
+			"revision": "0dadbb0345b35ec7ef35e228dabb8de89a65bf52",
+			"revisionTime": "2017-01-27T09:51:30Z"
 		},
 		{
 			"checksumSHA1": "1gLLX9RmMeBaF2V/ls2DIWQj1OA=",
