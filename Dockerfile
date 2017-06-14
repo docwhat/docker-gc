@@ -1,6 +1,7 @@
-# See https://github.com/grammarly/rocker for documentation.
+# Requires docker 17.06 to build
+
 ##### Build image #####
-FROM golang:1.7
+FROM golang:1.7 as builder
 
 # Bootstrap requirements
 COPY ./script/ /script/
@@ -19,16 +20,13 @@ RUN ./script/lint
 # Build binary
 RUN ./script/build docker
 
-MOUNT ./:/src/
-RUN cp docker-gc_linux_amd64 /src/
-
 ##### Run image #####
 FROM scratch
-MAINTAINER Christian Höltje <docwhat@gerf.org>
+
 ENV COLUMNS 80
-COPY ["docker-gc_linux_amd64", "/docker-gc"]
+
+COPY --from=builder /go/src/docwhat.org/docker-gc/docker-gc_linux_amd64 /docker-gc
+
 ENTRYPOINT ["/docker-gc"]
-TAG docker-gc:{{ if .Version }}{{ .Version }}{{ else }}devel{{ end }}
-TAG docker-gc:latest
 
 # vim: set ft=dockerfile :
