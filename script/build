@@ -17,15 +17,16 @@ progname="docker-gc"
 osarch="${1:-native}"
 export CGO_ENABLED=0 # Force static compiling
 
+version="$(git describe --tags || echo unreleased)"
+ldflags="-s -w -X main.version=${version}"
+
 function dogox()
 {
   gox \
-    -ldflags "-s -w" \
+    -ldflags "$ldflags" \
     -osarch="$*" \
     -output="${progname}_{{.OS}}_{{.Arch}}"
 }
-
-go generate
 
 if [[ "$osarch" == *all* ]]; then
   osarches=(
@@ -42,7 +43,7 @@ elif [[ "$osarch" == docker ]]; then
 else
   header "Building native binary"
   go build \
-    -ldflags "-s -w" \
+    -ldflags "$ldflags" \
     -o "$progname" \
     ./*.go
 fi

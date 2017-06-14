@@ -1,7 +1,5 @@
 package main
 
-//go:generate ./script/version
-
 import (
 	"fmt"
 	"os"
