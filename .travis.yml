@@ -1,27 +1,33 @@
 sudo: false
 language: go
-go: 1.7
+go: 1.8
 
 notifications:
   email:
     on_success: never
     on_failure: always
 
+env:
+  global:
+    - DEP_VERSION=0.3.2
+    - secure: "hbctOOj//8JEgTidYIn+mZ2uzYimGeFwmduUfnGcPpNk1fq7oUlfmXWItX+UU+Rfp2JbmC5LR3tStJLHRCXwabW2jiSsDntx7+iCU8L712tmP7aErRAhInlNsimyW2l/Vm5WfPPMfdO+/FXtBhYoMdtbPxKJuQlqEu3c/Hqvz9UTSwAaA7NPUCYQv951+E6Y0BYWhCJ8B5QvrRxyJGtU5Kt7c0maJ/nLDQYop2P5XGSUd22TFBIzx3VBrVszsev1i8nx3E9GJDqCK+j1uQQ12wyXAQvZOBKMuSBnUncHMBNgwOWYKL1KmegnOQh9FCDSEHK3PUVclVCv3yRQTA/9/QEP/LEhYVaPGFX1ABUT6eK0N79CAi7+ZsVPReFyqpjrOsInOri8dIHrTNepE2zlwE2OVK8AfemZseathQKEFFc7BV/qTVtn/v73a5k5eDP/0Lm+jqvc2Cw5/Yo56T6z/HArXfl3CwARWjPO1hx0jaaBALBB1AAJgDgkfLVb0Tnh8IVhkdLBGcQ7b1eY6unXoipD5XZhCi227UPDb20gE2vvix+Qsb+fF3z5AWyOXwxlzaUixfp0xwHD0oLBryZX7WWB/LDvv2hShWLBXX7Lp+JxjOrClTQSKdxp8IBN5+2gzYNKoLuqc344DjfsjJreUdBrXLT5P8wZSkby1p3sNzk="
+
+before_install:
+  - curl -L -s "https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64" -o "$GOPATH/bin/dep"
+  - chmod +x "$GOPATH/bin/dep"
+
 install:
+  - dep ensure
   - ./script/bootstrap -u
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
 script:
   - ./script/build
   - ./script/test
   - ./script/coverage
   - ./script/lint
-
-env:
-  global:
-    secure: "hbctOOj//8JEgTidYIn+mZ2uzYimGeFwmduUfnGcPpNk1fq7oUlfmXWItX+UU+Rfp2JbmC5LR3tStJLHRCXwabW2jiSsDntx7+iCU8L712tmP7aErRAhInlNsimyW2l/Vm5WfPPMfdO+/FXtBhYoMdtbPxKJuQlqEu3c/Hqvz9UTSwAaA7NPUCYQv951+E6Y0BYWhCJ8B5QvrRxyJGtU5Kt7c0maJ/nLDQYop2P5XGSUd22TFBIzx3VBrVszsev1i8nx3E9GJDqCK+j1uQQ12wyXAQvZOBKMuSBnUncHMBNgwOWYKL1KmegnOQh9FCDSEHK3PUVclVCv3yRQTA/9/QEP/LEhYVaPGFX1ABUT6eK0N79CAi7+ZsVPReFyqpjrOsInOri8dIHrTNepE2zlwE2OVK8AfemZseathQKEFFc7BV/qTVtn/v73a5k5eDP/0Lm+jqvc2Cw5/Yo56T6z/HArXfl3CwARWjPO1hx0jaaBALBB1AAJgDgkfLVb0Tnh8IVhkdLBGcQ7b1eY6unXoipD5XZhCi227UPDb20gE2vvix+Qsb+fF3z5AWyOXwxlzaUixfp0xwHD0oLBryZX7WWB/LDvv2hShWLBXX7Lp+JxjOrClTQSKdxp8IBN5+2gzYNKoLuqc344DjfsjJreUdBrXLT5P8wZSkby1p3sNzk="
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
 
 before_deploy:
   - ./script/build all

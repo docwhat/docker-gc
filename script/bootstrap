@@ -10,11 +10,17 @@ header "Fetching utilites"
 go get "$@" -v \
   github.com/alecthomas/gometalinter \
   github.com/mitchellh/gox \
-  github.com/kardianos/govendor \
   github.com/wadey/gocovmerge \
   github.com/pengwynn/flint
 
 header "Installing gometalinter tools"
 gometalinter --install
+
+header "Checking for dep"
+if ! command -v dep 2>/dev/null; then
+  echo "Please install the latest released version of dep:" 2>&1
+  echo "    https://github.com/golang/dep/" 2>&1
+  exit 10
+fi
 
 # vim: set ft=sh :

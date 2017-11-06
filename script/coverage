@@ -7,11 +7,11 @@ set -euo pipefail
 source "$(dirname "$0")/utilities.bash"
 
 header "Building coverage"
-govendor test \
+go test \
   -race \
   -cover \
   -covermode=atomic \
   -coverprofile=coverage.txt \
-  +local
+  .
 
 # vim: set ft=sh :
