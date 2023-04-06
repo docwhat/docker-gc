@@ -48,7 +48,7 @@ Usage
       -h, --help                Show context-sensitive help (also try --help-long
                                 and --help-man).
           --version             Show application version.
-      -m, --max-image-age=168h  How old to allow images to be before deletion. (Env:
+      -m, --max-image-age=168h  How long to allow images to be unused before deletion. (Env:
                                 DOCKER_GC_MAX_IMAGE_AGE)
       -s, --sweeper-time=15m    How much time between running checks to delete
                                 images. (Env: DOCKER_GC_SWEEPER_TIME)
